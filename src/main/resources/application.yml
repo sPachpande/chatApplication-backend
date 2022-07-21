@@ -6,7 +6,15 @@ spring:
     url: jdbc:postgresql://localhost:5432/chatApp
     username: chatApp
     password: chatApp
+  security:
+    user:
+      name: admin
+      password: admin
 logging:
   level:
     root: INFO
+    com:
+      zaxxer:
+        hikari: DEBUG
+
 
