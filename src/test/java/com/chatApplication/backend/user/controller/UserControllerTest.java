@@ -22,8 +22,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest
@@ -89,5 +90,23 @@ class UserControllerTest {
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(HttpStatus.CONFLICT.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    void shouldBeAbleToFetchAllUsers() throws Exception {
+        User user1 = new User(1l,"test1","test1");//Do not use mock here as it has to go through proper jackson deserialization
+        User user2 = new User(2l,"test2","test2");
+        ArrayList<User> usersList = new ArrayList<User>();
+        usersList.add(user1);
+        usersList.add(user2);
+        Mockito.when(userService.fetchAllUsers()).thenReturn(usersList);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/users")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
 }
