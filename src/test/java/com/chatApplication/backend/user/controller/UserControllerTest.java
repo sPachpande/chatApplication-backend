@@ -1,6 +1,7 @@
 package com.chatApplication.backend.user.controller;
 
 import com.chatApplication.backend.user.User;
+import com.chatApplication.backend.user.exceptions.UsernameAlreadyExistsException;
 import com.chatApplication.backend.user.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,7 +44,7 @@ class UserControllerTest {
     }
 
     @Test
-    void shouldRegisterSuccessfully() throws Exception {
+    void shouldRegisterSuccessfully() throws UsernameAlreadyExistsException, Exception {
 
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
@@ -68,5 +69,25 @@ class UserControllerTest {
 
         assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
         assertEquals(mockUser.toString(), savedUser.toString());
+    }
+
+    @Test
+    void shouldNotBeAbleToRegisterIfUsernameAlreadyExists() throws UsernameAlreadyExistsException, Exception {
+
+        Mockito.when(userService.createUser(Mockito.any())).thenThrow(new UsernameAlreadyExistsException());
+
+        JSONObject requestBody = new JSONObject();
+        requestBody.put("username", "test");
+        requestBody.put("password", "test");
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .content(String.valueOf(requestBody))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.CONFLICT.value(), result.getResponse().getStatus());
     }
 }

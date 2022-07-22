@@ -16,5 +16,8 @@ logging:
     com:
       zaxxer:
         hikari: DEBUG
+server:
+  error:
+    include-message: always
 
 
