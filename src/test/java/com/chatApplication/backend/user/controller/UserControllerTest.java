@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest
@@ -51,7 +53,7 @@ class UserControllerTest {
         Gson gson = builder.create();
 
         User mockUser = new User(1l,"test","test");
-        Mockito.when(userService.createUser(Mockito.any())).thenReturn(mockUser);
+        when(userService.createUser(Mockito.any())).thenReturn(mockUser);
 
 
         JSONObject requestBody = new JSONObject();
@@ -75,7 +77,7 @@ class UserControllerTest {
     @Test
     void shouldNotBeAbleToRegisterIfUsernameAlreadyExists() throws UsernameAlreadyExistsException, Exception {
 
-        Mockito.when(userService.createUser(Mockito.any())).thenThrow(new UsernameAlreadyExistsException());
+        when(userService.createUser(Mockito.any())).thenThrow(new UsernameAlreadyExistsException());
 
         JSONObject requestBody = new JSONObject();
         requestBody.put("username", "test");
@@ -99,7 +101,7 @@ class UserControllerTest {
         ArrayList<User> usersList = new ArrayList<User>();
         usersList.add(user1);
         usersList.add(user2);
-        Mockito.when(userService.fetchAllUsers()).thenReturn(usersList);
+        when(userService.fetchAllUsers()).thenReturn(usersList);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/users")
@@ -109,4 +111,5 @@ class UserControllerTest {
 
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
     }
+
 }

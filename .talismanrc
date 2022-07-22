@@ -3,4 +3,6 @@ fileignoreconfig:
   checksum: 39bb0c724849ad20b0600b0e64968b460ef8e47e6962e7418b26f9b6b9034296
 - filename: src/main/java/com/chatApplication/backend/user/User.java
   checksum: 2a314f1b3486c1d33f39d983ab3a2dfb5047ff5ee95ed2c8ad5f11ff9db0d29d
+- filename: src/main/java/com/chatApplication/backend/user/controller/UserController.java
+  checksum: 9ffc5d19c4bdfa28c598f512ad1b040e1aa7510a40ebc7127c6ded00e1d1f60e
 version: ""
