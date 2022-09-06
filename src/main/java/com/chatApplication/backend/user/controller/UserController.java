@@ -46,10 +46,12 @@ public class UserController {
         return userService.fetchAllUsers();
     }
 
+    @CrossOrigin
     @GetMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)
     User login(Authentication authentication) {
         ApplicationUser user = (ApplicationUser) authentication.getPrincipal();
+        System.out.println(user.getUser().toString());
         return user.getUser();
     }
 }
