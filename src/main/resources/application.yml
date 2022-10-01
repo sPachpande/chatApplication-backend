@@ -19,5 +19,8 @@ logging:
 server:
   error:
     include-message: always
+socket-server:
+  port: 8085
+  host: localhost
 
 
