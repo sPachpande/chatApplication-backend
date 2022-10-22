@@ -1,22 +1,27 @@
 package com.chatApplication.backend.user.controller;
 
+import com.chatApplication.backend.chat.MessageRepository;
 import com.chatApplication.backend.user.User;
 import com.chatApplication.backend.user.exceptions.UsernameAlreadyExistsException;
+import com.chatApplication.backend.user.repository.UserRepository;
 import com.chatApplication.backend.user.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minidev.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.ClassOrderer.OrderAnnotation;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -26,10 +31,13 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_CLASS;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
 
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class UserControllerTest {
 
     @InjectMocks
@@ -41,6 +49,13 @@ class UserControllerTest {
     @MockBean
     UserService userService;
 
+    @MockBean
+    MessageRepository messageRepository;
+
+    @AfterAll
+    public static void cleanup(){
+
+    }
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
@@ -69,7 +84,6 @@ class UserControllerTest {
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         User savedUser = gson.fromJson(result.getResponse().getContentAsString(),User.class);
-
         assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
         assertEquals(mockUser.toString(), savedUser.toString());
     }
