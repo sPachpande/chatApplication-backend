@@ -21,6 +21,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.MultiValueMap;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.channels.MulticastChannel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -29,7 +36,6 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest
 @DirtiesContext(classMode = AFTER_CLASS)
-@Disabled
 public class MessageControllerTest {
 
     @InjectMocks
@@ -50,6 +56,7 @@ public class MessageControllerTest {
     }
 
     @Test
+    @Disabled
     void shouldSaveMessageSuccessfully() throws Exception{
 
         GsonBuilder builder = new GsonBuilder();
@@ -83,4 +90,31 @@ public class MessageControllerTest {
         assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
         assertEquals(mockMessage.toString(), savedMessage.toString());
     }
+
+    @Test
+    void shouldFetchAllMessagesWithGivenSenderAndReceiver() throws Exception {
+        User sender = new User(1l,"test1","test1");
+        User receiver = new User(2l,"test2","test2");
+        ArrayList<User> usersList = new ArrayList<User>();
+        usersList.add(sender);
+        usersList.add(receiver);
+
+        Message message1 = new Message(1l,sender,receiver,"This is a message");
+        Message message2 = new Message(2l,sender,receiver,"This is second message");
+        ArrayList<Message> messagesList = new ArrayList<Message>();
+
+        when(messageService.findMessagesBySenderAndReceiver(sender,receiver)).thenReturn(messagesList);
+
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/messages")
+                .queryParam("sender","1")
+                .queryParam("receiver","2")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+//        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+    }
+
 }

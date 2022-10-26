@@ -1,11 +1,14 @@
 package com.chatApplication.backend.chat;
 
+import com.chatApplication.backend.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,6 +33,23 @@ public class MessageServiceTest {
 
         verify(messageRepository).save(mockMessage);
         assertThat(mockMessage, is(equalTo(savedMessage)));
+    }
+    @Test
+    void shouldReturnAllMessagesWithGivenSenderAndReceiver(){
+
+        User sender= new User(1l,"test1","test1");
+        User receiver= new User(2l,"test2","test2");
+
+        Message message1 = new Message(1l,sender,receiver,"This is a message");
+
+        ArrayList<Message> messagesList = new ArrayList<Message>();
+        messagesList.add(message1);
+
+        Mockito.when(messageRepository.findMessageBySenderAndReceiver(sender,receiver)).thenReturn(messagesList);
+
+        ArrayList<Message> savedMessages = messageService.findMessagesBySenderAndReceiver(sender,receiver);
+
+        assertThat(savedMessages.toString(), is(equalTo(messagesList.toString())));
     }
 }
 

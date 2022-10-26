@@ -1,12 +1,13 @@
 package com.chatApplication.backend.chat;
 
+import com.chatApplication.backend.user.User;
+import com.chatApplication.backend.user.exceptions.UsernameAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
 
 @RestController
 public class MessageController {
@@ -25,4 +26,10 @@ public class MessageController {
                         HttpStatus.INTERNAL_SERVER_ERROR, "Invalid Sender", e);
         }
     }
+
+    @GetMapping("/messages")
+    @ResponseStatus(code = HttpStatus.OK)
+    ArrayList<Message> fetchAllMessagesWithGivenSenderAndReceiver(@RequestParam User sender,@RequestParam User receiver) {
+            return messageService.findMessagesBySenderAndReceiver(sender,receiver);
+        }
 }
